@@ -1,0 +1,11 @@
+dist
+node_modules
+app/index.js
+app/index.js.map
+app/sections
+app/lib/**
+app/package-lock.json
+app/renderer.**
+app/wallet-*
+app/yarn*
+node.exe
