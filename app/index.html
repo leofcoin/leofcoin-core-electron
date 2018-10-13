@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Leofcoin</title>
+    <style media="screen">
+      html, body {
+        margin: 0;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        overflow: hidden;
+        position: absolute;
+        font-family: 'Roboto-Condensed', 'Noto', sans-serif;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+
+        --header-height: 48px;
+        --shadow-elevation-2dp:
+                      0 2px 2px 0 rgba(0, 0, 0, 0.14),
+                      0 1px 5px 0 rgba(0, 0, 0, 0.12),
+                      0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        --shadow-elevation-3dp:
+                      0 3px 4px 0 rgba(0, 0, 0, 0.14),
+                      0 1px 8px 0 rgba(0, 0, 0, 0.12),
+                      0 3px 3px -2px rgba(0, 0, 0, 0.4);
+        --shadow-elevation-4dp:
+                      0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                      0 1px 10px 0 rgba(0, 0, 0, 0.12),
+                      0 2px 4px -1px rgba(0, 0, 0, 0.4);
+        --shadow-elevation-6dp:
+                      0 6px 10px 0 rgba(0, 0, 0, 0.14),
+                      0 1px 18px 0 rgba(0, 0, 0, 0.12),
+                      0 3px 5px -1px rgba(0, 0, 0, 0.4);
+        --shadow-elevation-8dp:
+                      0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                      0 3px 14px 2px rgba(0, 0, 0, 0.12),
+                      0 5px 5px -3px rgba(0, 0, 0, 0.4);
+      }
+      h1, h2, h3, h4 {
+        margin: 0;
+      }
+      header {
+        display: flex;
+        flex-direction: row;
+        height: 48px;
+        background: #1c2c3b;
+        align-items: center;
+        padding: 8px 16px;
+        box-sizing: border-box;
+        width: 100%;
+        /* -webkit-app-region: drag; */
+        /* cursor: move; */
+      }
+      .appname {
+        color: #EEE;
+        font-size: 20px;
+      }
+      ul {
+        display: flex;
+        height: 48px;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        text-transform: uppercase;
+        text-decoration: none;
+        color: #eee;
+        font-weight: 700;
+        font-size: 14px;
+        height: 46px;
+        min-width: 112px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      a.selected {
+        border-bottom: 2px solid #eee;
+        font-size: 16px;
+      }
+      .container {
+        display: flex;
+        padding: 8px 16px;
+        box-sizing: border-box;
+      }
+      .flex {
+        flex: 1;
+      }
+      .flex-two {
+        flex: 2;
+      }
+      .flex-three {
+        flex: 3;
+      }
+      .vertical {
+        display: flex;
+        flex-direction: column;
+      }
+      .horizontal {
+        display: flex;
+        flex-direction: row;
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        box-sizing: border-box;
+      }
+      custom-pages {
+        position: absolute;
+        width: 100%;
+        /* top: 48px; */
+        height: calc(100% - 48px);
+      }
+      custom-pages section {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+      }
+      .selected {
+        opacity: 1;
+      }
+
+      section .vertical-layout {
+        width: 100%;
+        height: calc(100% - 56px);
+      }
+      .center {
+        align-items: center;
+      }
+      .hero {
+        display: flex;
+        max-width: 600px;
+        max-height: 340px;
+        height: 100%;
+        width: 100%;
+        box-shadow: 3px 2px 4px 2px rgba(0,0,0, 0.15),
+                    -2px 0px 4px 2px rgba(0,0,0, 0.15);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 2px;
+      }
+      .hero .content {
+        overflow: auto;
+      }
+      .address-container {
+        padding: 0 2em 0.8em 2em;
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 24px;
+      }
+      .address-info {
+        width: 100%;
+      }
+      .fab.medium {
+        font-size: 18px;
+        height: 40px;
+        width: 40px;
+      }
+      .fab.small {
+        font-size: 16px;
+        height: 32px;
+        width: 32px;
+      }
+      input {
+        padding: 0.6em;
+        border: none;
+        border-bottom: 1px solid #eee;
+        outline: none;
+      }
+      .last-blocks-item {
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      .connecting {
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #FFF;
+      }
+      .shown {
+        opacity: 1;
+      }
+      state-bar {
+        position: absolute;
+        bottom: 0;
+      }
+
+      splash-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #FFF;
+      }
+      .no-toast {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 6px 12px;
+        box-sizing: border-box;
+      }
+      .flex2 {
+        flex: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span class="appname">Leofcoin</span>
+      <span class="flex"></span>
+      <nav-bar class="navigation"
+        attr-for-selected="data-route"
+        items='["wallet", "miner", "explorer", "terminal", "settings"]'>
+      </nav-bar>
+    </header>
+    <custom-pages class="main" attr-for-selected="data-route">
+      <wallet-section data-route="wallet"></wallet-section>
+    </custom-pages>
+    <state-bar></state-bar>
+    <splash-screen></splash-screen>
+    <span class="no-toast main"></span>
+    <script src="node_modules/custom-svg-iconset/custom-svg-iconset.js" charset="utf-8"></script>
+    <custom-svg-iconset name="icons">
+      <svg><defs>
+        <g id="copy"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></g>
+        <g id="play"><path d="M8 5v14l11-7z"/></g>
+        <g id="stop"><path d="M6 6h12v12H6z"/></g>
+      </defs></svg>
+    </custom-svg-iconset>
+    <script src="wallet/wallet.js" type="module" charset="utf-8"></script>
+    <script>
+      class PubSub {
+
+        /**
+         * Creates handlers
+         */
+        constructor() {
+          this.handlers = [];
+        }
+
+        /**
+         * @param {String} event
+         * @param {Method} handler
+         * @param {HTMLElement} context
+         */
+        subscribe(event, handler, context) {
+          if (typeof context === 'undefined') {
+            context = handler;
+          }
+          this.handlers.push({event: event, handler: handler.bind(context)});
+        }
+        // // TODO:
+        unsubscribe(event, handler, context) {
+          if (typeof context === 'undefined') {
+            context = handler;
+          }
+          this.handlers.push({event: event, handler: handler.bind(context)});
+        }
+
+        /**
+         * @param {String} event
+         * @param {String|Number|Boolean|Object|Array} change
+         */
+        publish(event, change) {
+          for (let i = 0; i < this.handlers.length; i++) {
+            if (this.handlers[i].event === event) {
+              let oldValue = this.handlers[i].oldValue;
+              // dirty checking value, ensures that we don't create a loop
+              if (oldValue !== change) {
+                this.handlers[i].handler(change);
+                this.handlers[i].oldValue = change;
+              }
+            }
+          }
+        }
+      }
+      const main = document.querySelector('custom-pages');
+      const navigation = document.querySelector('.navigation');
+      const loaded = {};
+      const back = () => location.hash = location.hash.split('/')[0].replace('#', '');
+      const templates = {
+        terminal: `
+          <style>
+          #terminal-container {
+            width: 800px;
+            height: 450px;
+            margin: 0 auto;
+            padding: 2px;
+          }
+          </style>
+          <link rel="stylesheet" href="node_modules/xterm/dist/xterm.css" />
+          <link rel="stylesheet" href="node_modules/xterm/dist/addons/fullscreen/fullscreen.css" />
+          <div id="terminal-container">
+
+          </div>
+        `,
+        wallet: `
+          <leofcoin-wallet></leofcoin-wallet>
+        `,
+        miner: `
+          <style>
+            .miner-controls {
+              padding: 2em;
+              box-sizing: border-box;
+              position: relative;
+            }
+            .start-button, .stop-button {
+              position: absolute;
+            }
+          </style>
+
+          <span class="toolbar">
+            <span>
+              <h3>Current Mining Address</h3>
+              <span class="address"></span>
+            </span>
+            <span class="flex"></span>
+            <span class="vertical">
+              <h3 class="title">Total Balance</h3>
+              <strong class="balance">0</strong>
+            </span>
+          </span>
+
+          <span class="vertical vertical-layout center">
+            <span class="flex"></span>
+            <h3 title="Amount off cpu cores">Intensity</h3>
+            <input class="intensity" type="range" max="8" min="1" step="1"></input>
+            <span class="hashrate vertical"></span>
+            <span class="flex"></span>
+            <span class="miner-controls vertical center">
+              <extended-fab class="mine-button"></extended-fab>
+            </span>
+          </span>
+        `,
+        explorer: `
+          <style>
+            header.toolbar {
+              background: #3a5874;
+              color: #eee;
+              padding-right: 12px;
+            }
+
+            .search {
+              padding: 2em;
+              height: 32px;
+            }
+            .back {
+              border-radius: 50%;
+              width: 32px;
+              height: 32px;
+              font-size: 24px;
+              color: #eee;
+              box-shadow: none;
+            }
+            .last-blocks, explorer-block {
+              position: absolute;
+              top: 56px;
+            }
+          </style>
+          <header class="toolbar search" style="height:32px;">
+            <button class="back">&lt;</button>
+            <span class="flex"></span>
+            <input placeholder="search"></input>
+          </header>
+          <custom-pages class="explorer" attr-for-selected="name">
+            <span class="last-blocks vertical" name="home">
+              <header class="toolbar">
+                <h4>Height</h4>
+                <span class="flex"></span>
+                <h4>Age</h4>
+                <span class="flex"></span>
+                <h4>Transactions</h4>
+              </header>
+            </span>
+
+            <explorer-block class="block vertical center" name="block">
+            </explorer-block>
+          </custom-pages>
+        `
+      }
+      class AppUtils {
+        newSection(section, shadow = true) {
+          const _main = document.querySelector('.main');
+          const _section = document.createElement('section');
+          if (shadow) {
+            _section.attachShadow({mode: 'open'});
+            _section.shadowRoot.innerHTML = '<slot></slot>'
+          }
+          _section.dataset.route = section;
+          _section.innerHTML = templates[section];
+          _main.appendChild(_section);
+          _section.$ = query => _section.querySelector(query);
+          return _section;
+        }
+      }
+
+      const notifyToast = text => {
+        const toast = document.querySelector('.no-toast.main');
+        toast.text = text;
+        const clone = toast.cloneNode('deep');
+        clone.classList.remove('.main')
+        document.querySelector('body').appendChild(clone)
+        const timeout = () => {
+          setTimeout(() => {
+            document.querySelector('body').removeChild(clone);
+          }, 7000);
+        }
+      }
+      window.appUtils = window.appUtils || new AppUtils();
+      window.notify = window.notify || notifyToast;
+
+      class ClientSocket extends PubSub {
+        constructor() {
+          super();
+          this.onmessage = this.onmessage.bind(this);
+          this.onerror = this.onerror.bind(this);
+          return new Promise(resolve => {
+            const init = () => {
+              this.client = new WebSocket('ws://localhost:5005/', 'echo-protocol');
+
+              this.client.onmessage = this.onmessage;
+              this.client.onerror = this.onerror;
+              this.client.onopen = () => resolve(this);
+              this.client.onclose = () => {
+                console.log('echo-protocol Client Closed');
+                console.log('Retrying in 3 seconds');
+                setTimeout(() => {
+                  return init();
+                }, 3000);
+              };
+            }
+            return init()
+
+          });
+        }
+
+        onerror(error) {
+          this.publish('error', error);
+        }
+
+        onmessage(message) {
+          console.log(message.data);
+          const {data, name, type} = JSON.parse(message.data);
+          console.log(data, type, name);
+          if (data.status === 200) {
+            this.publish(`${type}-${name}`, data.data);
+          } else {
+            this.onerror(`Failed requesting ${type} @${this}`);
+          }
+
+        }
+
+        send(request) {
+          this.client.send(JSON.stringify(request))
+        }
+
+        on(name, cb) {
+          if (typeof name === 'object') {
+            name = `${name.type}-${name.name}`;
+          }
+          this.subscribe(name, cb);
+        }
+        /**
+         * @param {string} type
+         * @param {string} name
+         * @param {object} params
+         */
+        request(request) {
+          return new Promise((resolve, reject) => {
+            this.on(request, result => {
+              console.log(result, request);
+              resolve(result)
+            });
+            this.send(request);
+          });
+        }
+      }
+
+      clientSocket = new ClientSocket();
+      clientSocket.then(socket => {
+        window.clientSocket = socket;
+        // TODO: once ...
+        // TODO: check if needed first ...
+
+        socket.on({type: 'status', name: 'ready'}, ready => {
+          document.querySelector('splash-screen').ready = ready;
+          if (ready) {
+            selectSection('wallet');
+          }
+        });
+
+        socket.on({type: 'status', name: 'connecting'}, connecting => {
+          document.querySelector('splash-screen').connecting = connecting;
+          console.log('connecting', connecting);
+        });
+        socket.on({type: 'status', name: 'syncing'}, syncing => {
+          document.querySelector('splash-screen').syncing = syncing;
+          console.log('syncing', syncing);
+        });
+
+        loadScript('renderer.js').then(() => {
+          socket.send({type: 'status', name: 'syncing'});
+          socket.send({type: 'status', name: 'connecting'});
+          socket.send({type: 'status', name: 'ready'});
+        });
+
+      });
+
+      const needsLoad = target => {
+        return !Boolean(loaded[target]);
+      }
+
+      const loadScript = src => new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.onload = () => resolve();
+        script.onerror = error => reject(error);
+        // script.type = 'module';
+        script.src = src;
+        document.querySelector('head').appendChild(script);
+      });
+
+      const loadSection = async section => {
+        if (needsLoad(section)) {
+          await loadScript(`sections/${section}.js`);
+          loaded[section] = true;
+        }
+        return;
+      }
+      const selectSection = async selected => {
+        await loadSection(selected);
+        main.select(selected)
+        return;
+      }
+
+      navigation.addEventListener('selected', ({detail}) => {
+        selectSection(detail);
+      })
+
+      const selectSubSection = (section, subsection) => {
+        document.querySelector(`.${section}`).select(subsection);
+      }
+
+      const get = (url, fn) => {
+        return [url, fn]
+      }
+
+      const _routes = [
+
+        get('/#wallet', request => {
+          selectSection('wallet');
+        }),
+
+        get('/#wallet/send', async request => {
+          await selectSection('wallet');
+          selectSubSection('wallet', 'send');
+        }),
+
+        get('/#wallet/receive', async request => {
+          await selectSection('wallet');
+          selectSubSection('wallet', 'receive');
+        }),
+
+        get('/#wallet/addresses', async request => {
+          await selectSection('wallet');
+          selectSubSection('wallet', 'addresses');
+        }),
+
+        get('/#wallet/transactions', async request => {
+          await selectSection('wallet');
+          selectSubSection('wallet', 'transactions');
+        }),
+
+        get('/#terminal', request => {
+          selectSection('terminal');
+        }),
+
+        get('/#miner', request => {
+          selectSection('miner');
+        }),
+
+        get('/#explorer', request => {
+          selectSection('explorer');
+          selectSubSection('explorer', 'home');
+          document.querySelector('.explorer').getChain()
+        }),
+
+        get('/#explorer/block', async params => {
+          await selectSection('explorer');
+          selectSubSection('explorer', 'block');
+          const next = (Number(params) + 1);
+          console.log(window.chain[params]);
+          document.querySelector('explorer-block').stamp(window.chain[params], window.chain[next]);
+        }),
+      ];
+
+      const router = () => {
+
+      }
+      const getRoutes = () => {
+        const map = new Map();
+        _routes.forEach(route => map.set(route[0], route[1]));
+        return map;
+      }
+      const routes = getRoutes();
+      const isValidHash = hash => Boolean(hash.includes('#') && !hash.includes(':'));
+      console.log(routes);
+      const hashchange = (hash) => {
+        const params = {};
+        params.original = `/${hash}`;
+        const parts = hash.split('/');
+        if (!isValidHash(hash[0])) return console.warn('Router::no hash found or wrong parameter placement, seems you selected the wrong router method');
+        hash = '';
+        for (const part of parts) {
+            hash = hash + '/' + part
+          let fn = routes.get(hash);
+          const query = params.original.slice(hash.length + 1);
+          console.log(fn);
+          if (fn) {
+            console.log(hash);
+            if (query.length) {
+              fn = routes.get(hash);
+            }
+            console.log(query);
+            fn(query)
+          } else {
+            console.log(hash);
+            hash -= part;
+            fn = routes.get(hash);
+            if (fn) return fn(query);
+            else console.warn(`Router Error: 404::nothing found for ${hash}`);
+
+          }
+        }
+
+      }
+
+
+      router()
+
+      window.addEventListener('hashchange', change => hashchange(location.hash));
+    </script>
+
+  </body>
+</html>

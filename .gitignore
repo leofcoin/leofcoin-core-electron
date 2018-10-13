@@ -8,4 +8,5 @@ app/package-lock.json
 app/renderer.**
 app/wallet-*
 app/yarn*
+package-lock.json
 node.exe
